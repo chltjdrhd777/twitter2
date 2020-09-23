@@ -10,7 +10,7 @@
 
 # production
 /build
-/src/dataSource
+dataSource/
 
 # misc
 .DS_Store
