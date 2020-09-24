@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { HashRouter as Router, Route, Switch } from "react-router-dom";
-import { authService } from "./firebaseDB";
+import { authService } from "./dataSource/firebaseDB";
 import Auth from "routes/Auth";
 import Home from "routes/Home";
 

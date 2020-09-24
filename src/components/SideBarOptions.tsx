@@ -1,28 +1,42 @@
 import React from "react";
 import styled from "styled-components";
 import { icons } from "../dataSource/Icons";
+import { PropTypes } from "../dataSource/typedef";
 
-interface SideBarOptionProps {
-  Icon?: any;
-  text?: string;
-}
-
-function SideBarOption({ Icon, text }: SideBarOptionProps) {
+function SideBarOption({ active, Icon, text }: PropTypes["sideBarOption"]) {
   return (
-    <OptionsDiv>
+    <OptionsDiv active={active}>
       <Icon />
       <h2>{text}</h2>
     </OptionsDiv>
   );
 }
 
-const OptionsDiv = styled.div``;
+const OptionsDiv = styled.div<PropTypes["optionDiv"]>`
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+
+  & svg {
+    font-size: 20px;
+    padding: 10px;
+  }
+
+  &:hover {
+    background-color: var(--twitter-background);
+    border-radius: 30px;
+    color: var(--twitter-color);
+    transition: color 0.3s ease-out;
+  }
+
+  color: ${(props: PropTypes["optionDiv"]) => props.active && "#8296f8"};
+`;
 
 function SideBarOptions() {
   return (
     <>
-      <SideBarOption Icon={icons.TwitterIcon} text="Twitter" />
-      <SideBarOption Icon={icons.HomeIcon} text="Home" />
+      <SideBarOption active={true} Icon={icons.TwitterIcon} />
+      <SideBarOption active={true} Icon={icons.HomeIcon} text="Home" />
       <SideBarOption Icon={icons.SearchIcon} text="Search" />
       <SideBarOption Icon={icons.NotificationsNoneIcon} text="Notification" />
       <SideBarOption Icon={icons.MailOutlineIcon} text="Mail" />
