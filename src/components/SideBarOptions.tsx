@@ -18,8 +18,11 @@ const OptionsDiv = styled.div<PropTypes["optionDiv"]>`
   cursor: pointer;
 
   & svg {
-    font-size: 20px;
-    padding: 10px;
+    font-size: 15px;
+    padding: 7px;
+  }
+  & h2 {
+    padding-bottom: 2px;
   }
 
   &:hover {
@@ -30,12 +33,21 @@ const OptionsDiv = styled.div<PropTypes["optionDiv"]>`
   }
 
   color: ${(props: PropTypes["optionDiv"]) => props.active && "#8296f8"};
+  padding-right: 10px;
 `;
 
 function SideBarOptions() {
   return (
     <>
-      <SideBarOption active={true} Icon={icons.TwitterIcon} />
+      <icons.TwitterIcon
+        style={{
+          marginTop: "10px",
+          marginLeft: "10px",
+          marginBottom: "5px",
+          color: "var(--twitter-color)",
+          fontSize: "20px",
+        }}
+      />
       <SideBarOption active={true} Icon={icons.HomeIcon} text="Home" />
       <SideBarOption Icon={icons.SearchIcon} text="Search" />
       <SideBarOption Icon={icons.NotificationsNoneIcon} text="Notification" />
