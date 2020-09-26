@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import { icons } from "../dataSource/Icons";
-import { PropTypes } from "../dataSource/typedef";
+import { icons } from "dataSource/Icons";
+import { PropTypes } from "dataSource/typedef";
 
 function SideBarOption({ active, Icon, text }: PropTypes["sideBarOption"]) {
   return (

@@ -11,6 +11,7 @@ function Widgets() {
 
 const WidgetsDiv = styled.div`
   flex: 0.3;
+  border-top: 1px solid lightgrey;
 `;
 
 export default Widgets;

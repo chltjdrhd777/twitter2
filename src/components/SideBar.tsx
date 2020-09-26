@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components/macro";
 import SideBarOptions from "./SideBarOptions";
-import { icons } from "../dataSource/Icons";
+import { icons } from "dataSource/Icons";
 
 function SideBar() {
   return (
@@ -25,6 +25,7 @@ const BarDiv = styled.div`
   }
 
   border-right: 1px solid lightgrey;
+  border-top: 1px solid lightgrey;
   padding-left: 10px;
   padding-right: 30px;
   flex: 0.17;

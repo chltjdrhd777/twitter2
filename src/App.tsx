@@ -1,28 +1,33 @@
 import React, { useState } from "react";
 import { HashRouter as Router, Route, Switch } from "react-router-dom";
-import { authService } from "./dataSource/firebaseDB";
 import Auth from "routes/Auth";
 import Home from "routes/Home";
-import styled from "styled-components";
+import { Provider } from "react-redux";
+import { createStore } from "./redux/store";
+import { authService } from "dataSource/firebaseDB";
+
+const store = createStore();
 
 function App() {
-  const [logInState, setLogInState] = useState(true);
+  const [logInState, setLogInState] = useState(authService.currentUser);
   return (
-    <Router>
-      <Switch>
-        {logInState ? (
-          <>
+    <Provider store={store}>
+      <Router>
+        <Switch>
+          {logInState ? (
+            <>
+              <Route exact patch="/">
+                <Home />
+              </Route>
+            </>
+          ) : (
             <Route exact patch="/">
-              <Home />
+              <Auth />
             </Route>
-          </>
-        ) : (
-          <Route exact patch="/">
-            <Auth />
-          </Route>
-        )}
-      </Switch>
-    </Router>
+          )}
+        </Switch>
+      </Router>
+    </Provider>
   );
 }
 
