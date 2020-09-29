@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Redirect,
+  Route,
+  Switch,
+} from "react-router-dom";
 import Auth from "routes/Auth";
 import Home from "routes/Home";
 import { Provider } from "react-redux";
@@ -9,7 +14,9 @@ import { authService } from "dataSource/firebaseDB";
 const store = createStore();
 
 function App() {
-  const [logInState, setLogInState] = useState(authService.currentUser);
+  //just understanding old way
+  const [logInState, setLogInState] = useState(false);
+
   return (
     <Provider store={store}>
       <Router>
@@ -19,11 +26,16 @@ function App() {
               <Route exact patch="/">
                 <Home />
               </Route>
+              <Redirect to="/" />
             </>
           ) : (
-            <Route exact patch="/">
-              <Auth />
-            </Route>
+            <>
+              {" "}
+              <Route exact patch="/">
+                <Auth />
+              </Route>{" "}
+              <Redirect to="/" />
+            </>
           )}
         </Switch>
       </Router>

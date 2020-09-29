@@ -1,9 +1,8 @@
-import { authService } from "dataSource/firebaseDB";
+import { authService, persistence } from "dataSource/firebaseDB";
 import { icons } from "dataSource/Icons";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import "./test.css";
 
 function Auth() {
   const storecheck = useSelector((store: any) => store);
@@ -20,16 +19,28 @@ function Auth() {
       setPassword(value);
     }
   };
-  const onClose = (e: any) => {
+  persistence();
+  //? ///////////////////////////////////////////////////////////////
+
+  //?button actions//////////////////////////////////////////////////////
+  const onCreate = () => {
     window.location.href = "#popup1";
+    setEmail("");
+    setPassword("");
+  };
+  const onClose = () => {
+    window.location.href = "#";
+    setEmail("");
+    setPassword("");
   };
 
   const onSubmitLogin = async (e: any) => {
     try {
       e.preventDefault();
       await authService.signInWithEmailAndPassword(email, password);
+      console.log(authService.currentUser);
     } catch (err) {
-      console.log(err.message);
+      alert(err.message);
     }
   };
 
@@ -38,18 +49,16 @@ function Auth() {
       e.preventDefault();
       await authService.createUserWithEmailAndPassword(email, password);
     } catch (err) {
-      console.log(err.message);
+      alert(err.message);
     }
   };
-  //? ////////////////////////////////
 
-  //?button actions//
-  //? /////////////////
+  //? /////////////////////////////////////////////////////////////////////
 
   return (
     <AuthBody>
       <icons.TwitterIcon />
-      <TwitterTitle>Twitter2</TwitterTitle>
+      <TwitterTitle>Twitter 2</TwitterTitle>
       <AuthPartDiv>
         <form onSubmit={onSubmitLogin}>
           <input
@@ -69,11 +78,11 @@ function Auth() {
             required
           />
 
-          <input type="submit" value="Log In" />
+          <input type="submit" value="Log In" className="login__btn" />
         </form>
 
         <InfoDiv>
-          <button onClick={onClose}>Create your account</button>
+          <button onClick={onCreate}>Create your account</button>
           <button>Start with Google</button>
           <button>Start with Github</button>
         </InfoDiv>
@@ -82,7 +91,6 @@ function Auth() {
         <OverlayDiv id="popup1">
           <PopUpDiv>
             <h2>Please enter your Email && password</h2>
-            <CloseA href="#">close</CloseA>
             <form onSubmit={onSubmitCreateAccount}>
               <input
                 onChange={onChange}
@@ -101,10 +109,16 @@ function Auth() {
                 required
               />
 
-              <input type="submit" value="Create Account" />
+              <input
+                type="submit"
+                value="Create Account"
+                className="create_input"
+              />
             </form>
+            <CloseButton onClick={onClose}>close</CloseButton>
           </PopUpDiv>
         </OverlayDiv>
+
         {/*for popup*/}
       </AuthPartDiv>
     </AuthBody>
@@ -129,6 +143,7 @@ const TwitterTitle = styled.div`
   font-size: 100px;
   margin-bottom: 10px;
   font-weight: 800;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
 `;
 
 const AuthPartDiv = styled.div`
@@ -138,6 +153,43 @@ const AuthPartDiv = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  & .login__btn {
+    font-weight: 700;
+    transition: all 0.2s ease-in;
+    background: #0278ae;
+    color: white;
+
+    &:hover {
+      transform: translateY(-3px);
+      background: var(--twitter-color);
+      color: #0278ae;
+    }
+
+    &:active {
+      transform: translateY(3px);
+    }
+  }
+
+  & input {
+    border: none;
+    border-radius: 3px;
+    padding: 3px;
+    margin-left: 5px;
+    ::-webkit-input-placeholder {
+      color: var(--twitter-background);
+      text-align: center;
+    }
+    transition: all 0.2s ease-out;
+
+    &:focus {
+      background: var(--twitter-color);
+      ::-webkit-input-placeholder {
+        color: var(--twitter-color);
+      }
+      outline: none;
+    }
+  }
 `;
 
 const InfoDiv = styled.div`
@@ -157,27 +209,88 @@ const InfoDiv = styled.div`
       background: var(--twitter-color);
     }
     margin-top: 10px;
+    &:focus {
+      outline: none;
+    }
   }
 `;
 
 const OverlayDiv = styled.div`
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  position: absolute;
+  z-index: 100;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 50vh;
+  width: 70vh;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 5px solid var(--twitter-color);
+
   background: var(--twitter-background);
-  transition: opacity 0.5s;
   opacity: 0;
   visibility: hidden;
+  transition: all 0.5s ease-in-out;
 
   &:target {
     opacity: 1;
     visibility: visible;
   }
+
+  & .for_popup {
+    width: 100vh;
+    height: 100vh;
+    background: black;
+  }
 `;
 
-const PopUpDiv = styled.div``;
-const CloseA = styled.a``;
+const PopUpDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+
+  & form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 17px;
+
+    & > input {
+      margin-top: 3px;
+    }
+
+    & > .create_input {
+      &:hover {
+        background: var(--twitter-color);
+        color: white;
+      }
+    }
+  }
+
+  & h2 {
+    font-size: 15px;
+  }
+`;
+const CloseButton = styled.button`
+  background: var(--twitter-color);
+  padding: 5px;
+  margin-top: 20px;
+  border-radius: 5px;
+  color: white;
+  transition: all 0.2s ease-in-out;
+  border: none;
+
+  &:hover {
+    background-color: lightgray;
+    color: black;
+  }
+
+  &:focus {
+    outline: none;
+  }
+`;
 
 export default Auth;
