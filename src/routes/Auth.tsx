@@ -1,13 +1,9 @@
-import { authService, persistence } from "dataSource/firebaseDB";
+import { authService, firebaseInstance } from "dataSource/firebaseDB";
 import { icons } from "dataSource/Icons";
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 
 function Auth() {
-  const storecheck = useSelector((store: any) => store);
-  const dispatch = useDispatch();
-
   //? only for email,password typing and submit ////////////////////
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,7 +15,7 @@ function Auth() {
       setPassword(value);
     }
   };
-  persistence();
+
   //? ///////////////////////////////////////////////////////////////
 
   //?button actions//////////////////////////////////////////////////////
@@ -38,7 +34,6 @@ function Auth() {
     try {
       e.preventDefault();
       await authService.signInWithEmailAndPassword(email, password);
-      console.log(authService.currentUser);
     } catch (err) {
       alert(err.message);
     }
@@ -48,9 +43,27 @@ function Auth() {
     try {
       e.preventDefault();
       await authService.createUserWithEmailAndPassword(email, password);
+      setEmail("");
+      setPassword("");
+      window.location.href = "#";
     } catch (err) {
       alert(err.message);
     }
+  };
+
+  const onSocialClick = async (e: any) => {
+    const { name } = e.target;
+    let provider:
+      | firebase.auth.GoogleAuthProvider
+      | firebase.auth.GithubAuthProvider
+      | undefined = undefined;
+    if (name === "Google") {
+      provider = new firebaseInstance.auth.GoogleAuthProvider();
+    } else if (name === "Github") {
+      provider = new firebaseInstance.auth.GithubAuthProvider();
+    }
+    const data = await authService.signInWithPopup(provider!);
+    console.log(data);
   };
 
   //? /////////////////////////////////////////////////////////////////////
@@ -83,8 +96,12 @@ function Auth() {
 
         <InfoDiv>
           <button onClick={onCreate}>Create your account</button>
-          <button>Start with Google</button>
-          <button>Start with Github</button>
+          <button name="Google" onClick={onSocialClick}>
+            Start with Google
+          </button>
+          <button name="Github" onClick={onSocialClick}>
+            Start with Github
+          </button>
         </InfoDiv>
 
         {/* for popup*/}

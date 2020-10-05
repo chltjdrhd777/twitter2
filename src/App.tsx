@@ -7,39 +7,47 @@ import {
 } from "react-router-dom";
 import Auth from "routes/Auth";
 import Home from "routes/Home";
-import { Provider } from "react-redux";
-import { createStore } from "./redux/store";
 import { authService } from "dataSource/firebaseDB";
-
-const store = createStore();
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { actions } from "redux/homeReducer";
 
 function App() {
+  const dispatch = useDispatch();
   //just understanding old way
-  const [logInState, setLogInState] = useState(false);
+  const [logInState, setLogInState] = useState(true);
+  useEffect(() => {
+    authService.onAuthStateChanged((user) => {
+      if (user) {
+        setLogInState(true);
+      } else {
+        setLogInState(false);
+      }
+      dispatch(actions.userUpdate(user));
+      /*   authService.setPersistence(firebase.auth.Auth.Persistence.SESSION); */
+    });
+  }, [dispatch]);
 
   return (
-    <Provider store={store}>
-      <Router>
-        <Switch>
-          {logInState ? (
-            <>
-              <Route exact patch="/">
-                <Home />
-              </Route>
-              <Redirect to="/" />
-            </>
-          ) : (
-            <>
-              {" "}
-              <Route exact patch="/">
-                <Auth />
-              </Route>{" "}
-              <Redirect to="/" />
-            </>
-          )}
-        </Switch>
-      </Router>
-    </Provider>
+    <Router>
+      <Switch>
+        {logInState ? (
+          <>
+            <Route exact patch="/">
+              <Home />
+            </Route>
+            <Redirect to="/" />
+          </>
+        ) : (
+          <>
+            <Route exact patch="/">
+              <Auth />
+            </Route>
+            <Redirect to="/" />
+          </>
+        )}
+      </Switch>
+    </Router>
   );
 }
 
