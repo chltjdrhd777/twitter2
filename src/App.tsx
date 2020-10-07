@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import Auth from "routes/Auth";
 import Home from "routes/Home";
-import { authService } from "dataSource/firebaseDB";
+import { authService, dbService } from "dataSource/firebaseDB";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { actions } from "redux/homeReducer";
@@ -16,7 +16,26 @@ function App() {
   const dispatch = useDispatch();
   //just understanding old way
   const [logInState, setLogInState] = useState(true);
+
   useEffect(() => {
+    /*  const getTweets = async () => {
+      const data = await dbService.collection("tweets").get();
+      data.forEach((docs) => {
+        const newObject = { ...docs.data(), id: docs.id };
+        dispatch(actions.receiveTweet(newObject));
+      });
+    };
+    
+    getTweets(); */
+
+    dbService.collection("tweets").onSnapshot((snap) => {
+      const tweetData = snap.docs.map((e) => ({
+        docId: e.id,
+        ...e.data(),
+      }));
+      dispatch(actions.receiveTweet(tweetData));
+    });
+
     authService.onAuthStateChanged((user) => {
       if (user) {
         setLogInState(true);

@@ -2,16 +2,23 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { Avatar, Button } from "@material-ui/core";
 import { dbService } from "dataSource/firebaseDB";
+import { CombinedState } from "dataSource/typedef";
+import { useSelector } from "react-redux";
 
 function TweetBox() {
   //? onsubmit, onclick///////////
   const [text, setText] = useState("");
+  const reduxListener = useSelector(
+    (state: CombinedState) => state.homeReducer
+  );
+  const userInformation = reduxListener.userInfo;
 
   const onSubmit = async (e: any) => {
     e.preventDefault();
     await dbService.collection("tweets").add({
       tweet: text,
       createdDate: Date.now(),
+      creatorID: userInformation.uid,
     });
     setText("");
   };

@@ -1,6 +1,8 @@
 import React from "react";
+
 import styled from "styled-components";
 import TweetBox from "./TweetBox";
+import TweetContent from "./TweetContent";
 
 function Feed() {
   return (
@@ -9,6 +11,7 @@ function Feed() {
         <h2>Feed</h2>
       </div>
       <TweetBox />
+      <TweetContent />
     </FeedDiv>
   );
 }
