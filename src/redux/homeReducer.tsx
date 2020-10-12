@@ -21,6 +21,7 @@ export const homeReducer = createReducer<HomeState>(
           tweet: string;
           creatorID: string;
           docId: string;
+          imgFileUrl: string;
         }[]
       >
     ) => {

@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { Avatar, Button } from "@material-ui/core";
-import { dbService } from "dataSource/firebaseDB";
+import { dbService, storageService } from "dataSource/firebaseDB";
 import { CombinedState } from "dataSource/typedef";
 import { useSelector } from "react-redux";
+import { v4 as randomId } from "uuid";
 
 function TweetBox() {
   //? onsubmit, onclick///////////
   const [text, setText] = useState("");
+  const [img, setImg] = useState("");
+
   const reduxListener = useSelector(
     (state: CombinedState) => state.homeReducer
   );
@@ -15,17 +18,47 @@ function TweetBox() {
 
   const onSubmit = async (e: any) => {
     e.preventDefault();
-    await dbService.collection("tweets").add({
+    let imgFileUrl = "";
+    if (img) {
+      const fileReference = storageService
+        .ref()
+        .child(`${userInformation.uid}/${randomId()}`);
+      const response = await fileReference.putString(img, "data_url");
+      imgFileUrl = await response.ref.getDownloadURL();
+    }
+
+    const SendThis = {
       tweet: text,
       createdDate: Date.now(),
       creatorID: userInformation.uid,
-    });
+      imgFileUrl,
+    };
+
+    await dbService.collection("tweets").add(SendThis);
     setText("");
+    setImg("");
   };
 
   const onChange = (e: any) => {
     const { value } = e.target;
     setText(value);
+  };
+
+  const imagePreview = (e: any) => {
+    const { files } = e.target;
+    const targetFile = files[0];
+    const fileReader = new FileReader();
+    if (targetFile) {
+      fileReader.readAsDataURL(targetFile);
+      fileReader.onloadend = (finishedFile: any) => {
+        const { result } = finishedFile.currentTarget;
+        setImg(result);
+      };
+    }
+  };
+
+  const onClearPreview = () => {
+    setImg("");
   };
 
   return (
@@ -42,6 +75,13 @@ function TweetBox() {
           />
         </TweetInputDiv>
         <input type="text" placeholder="Enter image URL" />
+        <input type="file" accept="image/*" onChange={imagePreview} />
+        {img && (
+          <PreviewDiv>
+            <PreviewImg src={img} alt="" />
+            <button onClick={onClearPreview}>clear</button>
+          </PreviewDiv>
+        )}
         <Button type="submit" className="tweet__btn">
           Tweet
         </Button>
@@ -98,6 +138,12 @@ const TweetInputDiv = styled.div`
     border: none;
     padding: 10px;
   }
+`;
+const PreviewDiv = styled.div``;
+
+const PreviewImg = styled.img`
+  width: 50px;
+  height: 50px;
 `;
 
 export default TweetBox;

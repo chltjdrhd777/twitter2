@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { CombinedState } from "dataSource/typedef";
 import styled from "styled-components";
-import { dbService } from "dataSource/firebaseDB";
+import { dbService, storageService } from "dataSource/firebaseDB";
 import { useState } from "react";
 
 function TweetContent() {
@@ -16,10 +16,11 @@ function TweetContent() {
   const userInfo = reduxListener.userInfo;
 
   //? functions
-  const onDelete = async (docID: string) => {
+  const onDelete = async (docID: string, imgFileUrl: string) => {
     const confirming = window.confirm("are you want to delete this");
     if (confirming) {
       await dbService.doc(`tweets/${docID}`).delete();
+      await storageService.refFromURL(imgFileUrl).delete();
     }
   };
 
@@ -51,15 +52,20 @@ function TweetContent() {
             >
               <input value={editTargetValue} onChange={onEditChange}></input>
               <button type="submit">confirm</button>
-              <button onClick={() => onEditToggle(every.tweet)}>cancel</button>
+              <button onClick={() => onEditToggle(every.tweet!)}>cancel</button>
             </form>
           ) : (
             <>
+              {every.imgFileUrl && <TweetImg src={every.imgFileUrl} alt="" />}
               <h4>{every.tweet}</h4>
               {userInfo.uid === every.creatorID ? (
                 <>
-                  <button onClick={() => onDelete(every.docId)}>delete</button>
-                  <button onClick={() => onEditToggle(every.tweet)}>
+                  <button
+                    onClick={() => onDelete(every.docId, every.imgFileUrl!)}
+                  >
+                    delete
+                  </button>
+                  <button onClick={() => onEditToggle(every.tweet!)}>
                     edit
                   </button>
                 </>
@@ -74,6 +80,11 @@ function TweetContent() {
 
 const TweetDiv = styled.div`
   display: flex;
+`;
+
+const TweetImg = styled.img`
+  width: 100px;
+  height: 100px;
 `;
 
 export default TweetContent;
