@@ -1,5 +1,5 @@
 import { createAction, createReducer, PayloadAction } from "@reduxjs/toolkit";
-import { HomeState } from "dataSource/typedef";
+import { HomeState, TimeProps, TimeType } from "dataSource/typedef";
 
 //? actions
 const userUpdate = createAction<any>("USERUPDATE");
@@ -17,11 +17,13 @@ export const homeReducer = createReducer<HomeState>(
       state: HomeState,
       action: PayloadAction<
         {
-          createDate: number;
+          createdDate: TimeType;
           tweet: string;
           creatorID: string;
           docId: string;
           imgFileUrl: string;
+          avatarUrl: string;
+          writerEmail: string;
         }[]
       >
     ) => {

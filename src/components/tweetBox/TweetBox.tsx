@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { Avatar, Button } from "@material-ui/core";
 import { dbService, storageService } from "dataSource/firebaseDB";
-import { CombinedState } from "dataSource/typedef";
+import { CombinedState, timeGenerator } from "dataSource/typedef";
 import { useSelector } from "react-redux";
 import { v4 as randomId } from "uuid";
 
@@ -18,25 +18,29 @@ function TweetBox() {
 
   const onSubmit = async (e: any) => {
     e.preventDefault();
-    let imgFileUrl = "";
-    if (img) {
-      const fileReference = storageService
-        .ref()
-        .child(`${userInformation.uid}/${randomId()}`);
-      const response = await fileReference.putString(img, "data_url");
-      imgFileUrl = await response.ref.getDownloadURL();
+    if (text !== "" || img !== "") {
+      let imgFileUrl = "";
+      if (img) {
+        const fileReference = storageService
+          .ref()
+          .child(`${userInformation.uid}/${randomId()}`);
+        const response = await fileReference.putString(img, "data_url");
+        imgFileUrl = await response.ref.getDownloadURL();
+      }
+
+      const SendThis = {
+        tweet: text,
+        createdDate: timeGenerator(),
+        creatorID: userInformation.uid,
+        imgFileUrl,
+        avatarUrl:
+          "https://images.theconversation.com/files/93614/original/image-20150902-6712-uj9a9a.png?ixlib=rb-1.1.0&q=45&auto=format&w=496&fit=clip",
+        writerEmail: userInformation.email,
+      };
+      await dbService.collection("tweets").add(SendThis);
+      setText("");
+      setImg("");
     }
-
-    const SendThis = {
-      tweet: text,
-      createdDate: Date.now(),
-      creatorID: userInformation.uid,
-      imgFileUrl,
-    };
-
-    await dbService.collection("tweets").add(SendThis);
-    setText("");
-    setImg("");
   };
 
   const onChange = (e: any) => {
@@ -56,7 +60,6 @@ function TweetBox() {
       };
     }
   };
-
   const onClearPreview = () => {
     setImg("");
   };
@@ -74,8 +77,10 @@ function TweetBox() {
             maxLength={100}
           />
         </TweetInputDiv>
-        <input type="text" placeholder="Enter image URL" />
+        {/*         <input type="text" placeholder="Enter image URL" /> */}
+
         <input type="file" accept="image/*" onChange={imagePreview} />
+
         {img && (
           <PreviewDiv>
             <PreviewImg src={img} alt="" />

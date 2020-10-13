@@ -4,6 +4,8 @@ import { CombinedState } from "dataSource/typedef";
 import styled from "styled-components";
 import { dbService, storageService } from "dataSource/firebaseDB";
 import { useState } from "react";
+import { Avatar } from "@material-ui/core";
+import Time from "./Time";
 
 function TweetContent() {
   const [allowEdit, setAllowEdit] = useState(false);
@@ -56,8 +58,23 @@ function TweetContent() {
             </form>
           ) : (
             <>
-              {every.imgFileUrl && <TweetImg src={every.imgFileUrl} alt="" />}
+              <PosterDiv>
+                <AvaterDiv>
+                  <Avatar src={every.avatarUrl} />
+                </AvaterDiv>
+
+                <BodyDiv>
+                  <HeaderDiv>
+                    <HeaderTextDiv>
+                      <h3>{every.writerEmail}</h3>
+                      <Time writeTime={every.createdDate} />
+                    </HeaderTextDiv>
+                  </HeaderDiv>
+                </BodyDiv>
+              </PosterDiv>
               <h4>{every.tweet}</h4>
+              {every.imgFileUrl && <TweetImg src={every.imgFileUrl} alt="" />}
+
               {userInfo.uid === every.creatorID ? (
                 <>
                   <button
@@ -86,5 +103,11 @@ const TweetImg = styled.img`
   width: 100px;
   height: 100px;
 `;
+
+const PosterDiv = styled.div``;
+const AvaterDiv = styled.div``;
+const BodyDiv = styled.div``;
+const HeaderDiv = styled.div``;
+const HeaderTextDiv = styled.div``;
 
 export default TweetContent;

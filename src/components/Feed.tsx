@@ -1,8 +1,8 @@
 import React from "react";
 
 import styled from "styled-components";
-import TweetBox from "./TweetBox";
-import TweetContent from "./TweetContent";
+import TweetBox from "./tweetBox/TweetBox";
+import TweetContent from "./tweetBox/TweetContent";
 
 function Feed() {
   return (
