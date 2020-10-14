@@ -70,23 +70,34 @@ function TweetContent() {
                       <Time writeTime={every.createdDate} />
                     </HeaderTextDiv>
                   </HeaderDiv>
+
+                  <ContentDiv>
+                    <div className="tweetText">{every.tweet}</div>
+                    {every.imgFileUrl && (
+                      <>
+                        <ImgContaingerDiv>
+                          <TweetImg src={every.imgFileUrl} alt="" />
+                        </ImgContaingerDiv>
+                      </>
+                    )}
+
+                    {userInfo.uid === every.creatorID ? (
+                      <>
+                        <button
+                          onClick={() =>
+                            onDelete(every.docId, every.imgFileUrl!)
+                          }
+                        >
+                          delete
+                        </button>
+                        <button onClick={() => onEditToggle(every.tweet!)}>
+                          edit
+                        </button>
+                      </>
+                    ) : null}
+                  </ContentDiv>
                 </BodyDiv>
               </PosterDiv>
-              <h4>{every.tweet}</h4>
-              {every.imgFileUrl && <TweetImg src={every.imgFileUrl} alt="" />}
-
-              {userInfo.uid === every.creatorID ? (
-                <>
-                  <button
-                    onClick={() => onDelete(every.docId, every.imgFileUrl!)}
-                  >
-                    delete
-                  </button>
-                  <button onClick={() => onEditToggle(every.tweet!)}>
-                    edit
-                  </button>
-                </>
-              ) : null}
             </>
           )}
         </TweetDiv>
@@ -99,15 +110,37 @@ const TweetDiv = styled.div`
   display: flex;
 `;
 
+const ImgContaingerDiv = styled.div`
+  width: 250px;
+  height: 250px;
+`;
 const TweetImg = styled.img`
-  width: 100px;
-  height: 100px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 `;
 
-const PosterDiv = styled.div``;
-const AvaterDiv = styled.div``;
-const BodyDiv = styled.div``;
-const HeaderDiv = styled.div``;
-const HeaderTextDiv = styled.div``;
+const PosterDiv = styled.div`
+  display: flex;
 
+  border-bottom: 8px solid lightgray;
+  width: 100%;
+`;
+
+const AvaterDiv = styled.div`
+  margin-left: 10px;
+`;
+const BodyDiv = styled.div`
+  margin-left: 15px;
+`;
+const HeaderDiv = styled.div``;
+const HeaderTextDiv = styled.div`
+  display: flex;
+`;
+
+const ContentDiv = styled.div`
+  & .tweetText {
+    margin: 10px 0px;
+  }
+`;
 export default TweetContent;
