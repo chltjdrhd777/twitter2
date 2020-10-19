@@ -1,4 +1,3 @@
-import { time } from "console";
 import { TimeProps } from "dataSource/typedef";
 import React from "react";
 import styled from "styled-components";
@@ -41,6 +40,12 @@ function Time({ writeTime }: TimeProps) {
         returnTime = min + "minute ago";
       } else {
         returnTime = min + "minutes ago";
+      }
+    } else if (hour > 0) {
+      if (hour === 1) {
+        returnTime = hour + "hour ago";
+      } else {
+        returnTime = hour + "hours ago";
       }
     }
   }

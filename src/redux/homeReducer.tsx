@@ -1,10 +1,11 @@
 import { createAction, createReducer, PayloadAction } from "@reduxjs/toolkit";
-import { HomeState, TimeProps, TimeType } from "dataSource/typedef";
+import { HomeState, TimeType } from "dataSource/typedef";
 
 //? actions
 const userUpdate = createAction<any>("USERUPDATE");
 const receiveTweet = createAction<{}>("RECEIVETWEET");
-export const actions = { userUpdate, receiveTweet };
+const menu = createAction<{ popUpCheck: boolean; docId: string }>("MENU");
+export const actions = { userUpdate, receiveTweet, menu };
 
 //? reducer
 export const homeReducer = createReducer<HomeState>(

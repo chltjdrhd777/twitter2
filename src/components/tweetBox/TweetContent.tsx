@@ -1,15 +1,19 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { CombinedState } from "dataSource/typedef";
-import styled from "styled-components";
+import styled from "styled-components/macro";
 import { dbService, storageService } from "dataSource/firebaseDB";
 import { useState } from "react";
 import { Avatar } from "@material-ui/core";
 import Time from "./Time";
+import { icons } from "dataSource/Icons";
+import $ from "jquery";
+import { actions } from "redux/homeReducer";
 
 function TweetContent() {
   const [allowEdit, setAllowEdit] = useState(false);
   const [editTargetValue, setEditTargetValue] = useState("");
+  const dispatch = useDispatch();
 
   const reduxListener = useSelector(
     (state: CombinedState) => state.homeReducer
@@ -37,6 +41,8 @@ function TweetContent() {
     const { value } = e.target;
     setEditTargetValue(value);
   };
+
+  const popUpFunc = (docId: string) => {};
 
   return (
     <>
@@ -80,23 +86,27 @@ function TweetContent() {
                         </ImgContaingerDiv>
                       </>
                     )}
-
-                    {userInfo.uid === every.creatorID ? (
-                      <>
-                        <button
-                          onClick={() =>
-                            onDelete(every.docId, every.imgFileUrl!)
-                          }
-                        >
-                          delete
-                        </button>
-                        <button onClick={() => onEditToggle(every.tweet!)}>
-                          edit
-                        </button>
-                      </>
-                    ) : null}
                   </ContentDiv>
                 </BodyDiv>
+
+                <PopUpDiv onClick={(e) => console.log(e.currentTarget)}>
+                  <icons.KeyboardArrowDownIcon />
+                </PopUpDiv>
+
+                <AfterPopUpDiv>
+                  {userInfo.uid === every.creatorID ? (
+                    <>
+                      <button
+                        onClick={() => onDelete(every.docId, every.imgFileUrl!)}
+                      >
+                        delete
+                      </button>
+                      <button onClick={() => onEditToggle(every.tweet!)}>
+                        edit
+                      </button>
+                    </>
+                  ) : null}
+                </AfterPopUpDiv>
               </PosterDiv>
             </>
           )}
@@ -122,6 +132,7 @@ const TweetImg = styled.img`
 
 const PosterDiv = styled.div`
   display: flex;
+  position: relative;
 
   border-bottom: 8px solid lightgray;
   width: 100%;
@@ -143,4 +154,49 @@ const ContentDiv = styled.div`
     margin: 10px 0px;
   }
 `;
+
+const PopUpDiv = styled.div`
+  position: absolute;
+  right: 15px;
+  margin-top: 5px;
+  border-radius: 50%;
+  border: 1px solid white;
+  width: 15px;
+  height: 15px;
+  &:hover {
+    transition: all 0.3s ease-in;
+    background-color: grey;
+    border: 1px solid var(--twitter-color);
+
+    & > .down_bar {
+      color: white;
+    }
+  }
+`;
+
+const AfterPopUpDiv = styled.div`
+  position: absolute;
+  box-shadow: 0px 0px 5px;
+  right: 3.5px;
+  top: 5px;
+  opacity: 0;
+  visibility: hidden;
+  outline: none;
+
+  & > button {
+    background-color: var(--twitter-color);
+    border: none;
+    color: white;
+    width: 100%;
+    &:hover {
+      transition: all 0.3s ease-in;
+      background-color: var(--twitter-background);
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+`;
+
 export default TweetContent;

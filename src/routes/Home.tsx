@@ -6,7 +6,7 @@ import Widgets from "components/Widgets";
 
 function Home() {
   return (
-    <HomeContainerDiv>
+    <HomeContainerDiv className="body">
       <SideBar />
       <Feed />
       <Widgets />
