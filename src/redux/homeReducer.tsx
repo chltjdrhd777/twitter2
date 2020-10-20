@@ -4,8 +4,10 @@ import { HomeState, TimeType } from "dataSource/typedef";
 //? actions
 const userUpdate = createAction<any>("USERUPDATE");
 const receiveTweet = createAction<{}>("RECEIVETWEET");
-const menu = createAction<{ popUpCheck: boolean; docId: string }>("MENU");
-export const actions = { userUpdate, receiveTweet, menu };
+const menuOpen = createAction<{ menuOpenCheck: boolean; docId: string }>(
+  "MENU"
+);
+export const actions = { userUpdate, receiveTweet, menuOpen };
 
 //? reducer
 export const homeReducer = createReducer<HomeState>(
@@ -25,10 +27,22 @@ export const homeReducer = createReducer<HomeState>(
           imgFileUrl: string;
           avatarUrl: string;
           writerEmail: string;
+          menuOpenCheck: boolean;
         }[]
       >
     ) => {
       state.receivedTweet = action.payload;
+    },
+    [menuOpen.type]: (
+      state: HomeState,
+      action: PayloadAction<{ menuOpenCheck: boolean; docId: string }>
+    ) => {
+      let indexCheck = state.receivedTweet?.findIndex(
+        (every) => every.docId === action.payload.docId
+      );
+
+      state.receivedTweet![indexCheck!].menuOpenCheck =
+        action.payload.menuOpenCheck;
     },
   }
 );

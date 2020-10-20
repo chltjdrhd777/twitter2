@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { CombinedState } from "dataSource/typedef";
 import styled from "styled-components/macro";
@@ -7,8 +7,8 @@ import { useState } from "react";
 import { Avatar } from "@material-ui/core";
 import Time from "./Time";
 import { icons } from "dataSource/Icons";
-import $ from "jquery";
 import { actions } from "redux/homeReducer";
+import BottomMenu from "./BottomMenu";
 
 function TweetContent() {
   const [allowEdit, setAllowEdit] = useState(false);
@@ -42,7 +42,17 @@ function TweetContent() {
     setEditTargetValue(value);
   };
 
-  const popUpFunc = (docId: string) => {};
+  const popUpFunc = (menuOpenCheck: boolean, docId: string) => {
+    dispatch(actions.menuOpen({ menuOpenCheck, docId }));
+  };
+
+  const parentCheck = useRef<HTMLDivElement>(null);
+  window.addEventListener("click", (e: any) => {
+    console.log(e.target, parentCheck.current?.children[0]);
+    if (e.target !== parentCheck.current) {
+      console.log("you clicked outside");
+    }
+  });
 
   return (
     <>
@@ -87,26 +97,32 @@ function TweetContent() {
                       </>
                     )}
                   </ContentDiv>
+
+                  <BottomMenu />
                 </BodyDiv>
 
-                <PopUpDiv onClick={(e) => console.log(e.currentTarget)}>
+                <PopUpDiv
+                  onClick={() => popUpFunc(!every.menuOpenCheck, every.docId)}
+                  ref={parentCheck}
+                >
                   <icons.KeyboardArrowDownIcon />
                 </PopUpDiv>
-
-                <AfterPopUpDiv>
-                  {userInfo.uid === every.creatorID ? (
-                    <>
-                      <button
-                        onClick={() => onDelete(every.docId, every.imgFileUrl!)}
-                      >
-                        delete
-                      </button>
-                      <button onClick={() => onEditToggle(every.tweet!)}>
-                        edit
-                      </button>
-                    </>
-                  ) : null}
-                </AfterPopUpDiv>
+                {every.menuOpenCheck && (
+                  <AfterPopUpDiv>
+                    {userInfo.uid === every.creatorID ? (
+                      <>
+                        <button
+                          onClick={() =>
+                            onDelete(every.docId, every.imgFileUrl!)
+                          }
+                        >
+                          delete
+                        </button>
+                        <button>edit</button>
+                      </>
+                    ) : null}
+                  </AfterPopUpDiv>
+                )}
               </PosterDiv>
             </>
           )}
@@ -121,20 +137,21 @@ const TweetDiv = styled.div`
 `;
 
 const ImgContaingerDiv = styled.div`
-  width: 250px;
-  height: 250px;
+  width: 200px;
+  height: 200px;
 `;
 const TweetImg = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 20px;
 `;
 
 const PosterDiv = styled.div`
   display: flex;
   position: relative;
 
-  border-bottom: 8px solid lightgray;
+  border-bottom: 5px solid lightgray;
   width: 100%;
 `;
 
@@ -174,13 +191,17 @@ const PopUpDiv = styled.div`
   }
 `;
 
+/* interface AfterPopUpProp {
+  menuOpenCheck :boolean
+} */
+
 const AfterPopUpDiv = styled.div`
   position: absolute;
   box-shadow: 0px 0px 5px;
   right: 3.5px;
   top: 5px;
-  opacity: 0;
-  visibility: hidden;
+  /*  opacity: 0;
+  visibility: hidden; */
   outline: none;
 
   & > button {

@@ -36,6 +36,7 @@ function TweetBox() {
         avatarUrl:
           "https://images.theconversation.com/files/93614/original/image-20150902-6712-uj9a9a.png?ixlib=rb-1.1.0&q=45&auto=format&w=496&fit=clip",
         writerEmail: userInformation.email,
+        menuOpenCheck: false,
       };
       await dbService.collection("tweets").add(SendThis);
       setText("");
@@ -97,7 +98,7 @@ function TweetBox() {
 
 const TweetBoxDiv = styled.div`
   padding-bottom: 10px;
-  border-bottom: 8px solid lightgray;
+  border-bottom: 5px solid lightgray;
   padding-right: 10px;
 
   & > form {
